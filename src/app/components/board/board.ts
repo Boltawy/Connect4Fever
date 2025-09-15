@@ -1,4 +1,4 @@
-import { Component, effect, HostListener, inject, OnChanges, OnInit, signal } from '@angular/core';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { BoardHole } from '../board-hole/board-hole';
 import { BoardService } from '../../board.service';
 
