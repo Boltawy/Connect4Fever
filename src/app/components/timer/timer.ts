@@ -27,9 +27,6 @@ import { BoardService } from '../../board.service';
 .clip {
   clip-path: polygon(50% 80%, 0 100%, 100% 100%);
 }
-.clip-shadow {
-  clip-path: polygon(50% 80%, 0% 100%, 100% 100%);
-}
   `,
 })
 export class Timer {
