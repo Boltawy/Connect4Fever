@@ -37,6 +37,7 @@ export class Board {
     if (event.key === 'r') {
       this.boardService.resetBoard();
       this.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
+      this.boardService.resetTimer();
     }
   }
 
@@ -73,6 +74,7 @@ export class Board {
     this.checkForWin(placedDiskIndex, placedDiskColumn, placedDiskRow, playerTurn);
     this.playDropSound();
     this.redTurn.set(!this.redTurn());
+    this.boardService.resetTimer();
   }
 
   checkForWin(

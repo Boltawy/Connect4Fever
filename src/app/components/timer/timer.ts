@@ -19,7 +19,7 @@ import { BoardService } from '../../board.service';
         }} shadow-[0_10px_0_0_rgba(0,0,0,0.8)] border-l-4 border-r-4 border-b-4 translate-y-[295px] rounded-2xl flex flex-col items-center justify-center transition-colors"
       >
         <p class="text-white text-2xl font-bold">{{ playerTurn() }}'s turn !</p>
-        <p class="text-white text-6xl font-bold">15s</p>
+        <p class="text-white text-6xl font-bold">{{ timer() }}s</p>
       </div>
     </div>
   `,
@@ -35,6 +35,11 @@ import { BoardService } from '../../board.service';
 export class Timer {
   protected readonly boardService = inject(BoardService);
   redTurn = this.boardService.redTurn;
+  timer = computed(() => this.boardService.timer());
+
+  ngOnInit() {
+    this.boardService.tick();
+  }
 
   playerTurn = computed(() => (this.redTurn() ? 'RED' : 'YELLOW'));
   playerTurnColor = computed(() => (this.redTurn() ? 'bg-red-400' : 'bg-yellow-500'));
