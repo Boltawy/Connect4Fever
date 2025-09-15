@@ -6,7 +6,7 @@ import { BoardService } from '../../board.service';
   imports: [],
   template: `
     <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-8 sm:translate-y-4 md:-translate-y-4 lg:-translate-y-1 w-[300px] h-[300px] scale-[0.45] sm:scale-[0.6] lg:scale-[0.7]"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-8 sm:translate-y-4 md:-translate-y-4 lg:-translate-y-1 w-[300px] h-[300px] scale-[0.45] sm:scale-[0.6] lg:scale-[0.7] pointer-events-none"
     >
       <div
         class="absolute top-0 clip w-[300px] h-[300px] {{
@@ -38,7 +38,7 @@ export class Timer {
   timer = computed(() => this.boardService.timer());
 
   ngOnInit() {
-    this.boardService.tick();
+    this.boardService.startTimer();
   }
 
   playerTurn = computed(() => (this.redTurn() ? 'RED' : 'YELLOW'));

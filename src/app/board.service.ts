@@ -14,7 +14,7 @@ export class BoardService {
   }
   timerDefaultValue = 20;
   timer = signal<number>(this.timerDefaultValue);
-  tick() {
+  startTimer() {
     this.timerInterval = setInterval(() => {
       this.timer.set(this.timer() - 1);
       if (this.timer() === 0) {
@@ -27,6 +27,9 @@ export class BoardService {
   resetTimer() {
     this.timer.set(this.timerDefaultValue);
     clearInterval(this.timerInterval);
-    this.tick();
+    this.startTimer();
+  }
+  stopTimer() {
+    clearInterval(this.timerInterval);
   }
 }
