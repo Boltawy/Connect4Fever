@@ -4,7 +4,7 @@ import { Component, computed, input, signal } from '@angular/core';
   selector: 'app-board-hole',
   imports: [],
   template: `
-    <div class="relative w-12 h-12">
+    <div class="relative w-14 h-14 flex items-center justify-center">
       <div class="relative w-full h-full rounded-full overflow-hidden border-2 border-black">
         <div class="absolute inset-0 rounded-full {{ shadowColor() }}"></div>
         <div class="absolute inset-0 rounded-full {{ holeColor() }} translate-y-1"></div>

@@ -7,7 +7,9 @@ import { BoardService } from '../../board.service';
   imports: [BoardHole],
   template: `
     <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] bg-white aspect-[7/6] border-3 border-black rounded-3xl p-4 grid grid-cols-7 grid-rows-6 gap-3.5  md:scale-[1] lg:scale-[1.5]"
+      class="absolute top-[55%] md:top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] bg-white aspect-[7/6] border-3 border-black rounded-3xl p-4 pb-10 grid grid-cols-7 grid-rows-6 gap-3.5 shadow-[0_10px_0_0_rgba(0,0,0,0.8)] {{
+        this.scaling
+      }}"
     >
       @for (hole of boardService.boardArray; track $index) {
       <app-board-hole
@@ -38,6 +40,8 @@ export class Board {
     }
   }
 
+  scaling = 'scale-[0.67] sm:scale-[1] lg:scale-[1.1]';
+
   protected readonly boardService = inject(BoardService);
   protected readonly boardArray = this.boardService.boardArray;
   protected readonly columnCount = this.boardService.columnCount;
@@ -50,7 +54,7 @@ export class Board {
   }
 
   diskPointerArray = signal<Array<number>>([35, 36, 37, 38, 39, 40, 41]);
-  redTurn = signal(true);
+  redTurn = this.boardService.redTurn;
 
   handleHoleClick(clickedDiskIndex: number) {
     const clickedHoleColumn = clickedDiskIndex % this.columnCount;
