@@ -9,7 +9,9 @@ import { BoardService } from '../../board.service';
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-8 sm:translate-y-4 md:-translate-y-4 lg:-translate-y-1 w-[300px] h-[300px] scale-[0.45] sm:scale-[0.6] lg:scale-[0.7]"
     >
       <div
-        class="absolute top-0 clip w-[300px] h-[300px] {{ playerTurnColor() }} rounded-4xl transition-colors"
+        class="absolute top-0 clip w-[300px] h-[300px] {{
+          playerTurnColor()
+        }} rounded-4xl transition-colors"
       ></div>
       <div
         class="absolute w-[300px] h-[150px] {{
@@ -35,5 +37,5 @@ export class Timer {
   redTurn = this.boardService.redTurn;
 
   playerTurn = computed(() => (this.redTurn() ? 'RED' : 'YELLOW'));
-  playerTurnColor = computed(() => (this.redTurn() ? 'bg-red-400' : 'bg-yellow-400'));
+  playerTurnColor = computed(() => (this.redTurn() ? 'bg-red-400' : 'bg-yellow-500'));
 }
