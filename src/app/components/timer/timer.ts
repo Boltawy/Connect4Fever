@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { BoardService } from '../../board.service';
+import { BoardService } from '../../services/board.service';
 
 @Component({
   selector: 'app-timer',
