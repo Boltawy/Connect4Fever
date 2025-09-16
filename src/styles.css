@@ -1,3 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 
+
+.shadow-art {
+    box-shadow: 0 5px 0 0 rgba(0, 0, 0, 0.8);
+    border: 2px solid black;
+}
+
+.shadow-art-hover {
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.8);
+    border: 2px solid black;
+}
