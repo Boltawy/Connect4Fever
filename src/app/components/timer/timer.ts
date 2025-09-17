@@ -39,5 +39,5 @@ export class Timer {
   }
 
   playerTurn = computed(() => (this.redTurn() ? 'RED' : 'YELLOW'));
-  playerTurnColor = computed(() => (this.redTurn() ? 'bg-red-400' : 'bg-yellow-500'));
+  playerTurnColor = computed(() => (this.redTurn() ? 'bg-red-400' : 'bg-yellow-400'));
 }

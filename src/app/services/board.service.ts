@@ -33,6 +33,13 @@ export class BoardService {
     clearInterval(this.timerInterval);
   }
 
+  resetGame() {
+    this.resetBoard();
+    this.redTurn.set(true);
+    this.resetTimer();
+    this.stopTimer();
+  }
+
   checkForWin(
     placedDiskIndex: number,
     placedDiskColumn: number,

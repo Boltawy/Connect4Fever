@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VsPlayer } from './vs-player';
+import { Online } from './online';
 
-describe('VsPlayer', () => {
-  let component: VsPlayer;
-  let fixture: ComponentFixture<VsPlayer>;
+describe('Online', () => {
+  let component: Online;
+  let fixture: ComponentFixture<Online>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VsPlayer]
+      imports: [Online]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(VsPlayer);
+    fixture = TestBed.createComponent(Online);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

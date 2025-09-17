@@ -1,6 +1,7 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { BoardHole } from '../board-hole/board-hole';
 import { BoardService } from '../../services/board.service';
+import { MultiplayerService } from '../../services/multiplayer.service';
 
 @Component({
   selector: 'app-board',
@@ -21,6 +22,7 @@ import { BoardService } from '../../services/board.service';
   `,
 })
 export class Board {
+
   @HostListener('document:keyup', ['$event'])
   handleKeyPress(event: KeyboardEvent) {
     this.handleNumberKeyPress(event);
@@ -47,6 +49,7 @@ export class Board {
   protected readonly boardArray = this.boardService.boardArray;
   protected readonly columnCount = this.boardService.columnCount;
   protected readonly rowCount = this.boardService.rowCount;
+
 
   dropSound = new Audio('disc.mp3');
   playDropSound() {
