@@ -1,17 +1,18 @@
 import { inject, Injectable, NgZone } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BoardService } from './board.service';
+import { BoardCell } from './board.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MultiplayerService {
   protected readonly boardService = inject(BoardService);
-  protected readonly ngZone = inject(NgZone);
+  // protected readonly ngZone = inject(NgZone);
   socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:3000', {
+    this.socket = io('c4fever.eu-4.evennode.com', {
       transports: ['websocket'],
     });
 
@@ -25,10 +26,22 @@ export class MultiplayerService {
       console.log('Disconnected from server');
     });
     this.socket.on('updateBoard', (boardArray: string[]) => {
-      this.ngZone.run(() => {
-        this.boardService.boardArray = [...boardArray];
-      });
+      this.boardService.boardArray.set([...boardArray] as BoardCell[]);
       console.log('Board Updated');
+    });
+    this.socket.on('updatePointerArray', (pointerArray: number[]) => {
+      this.boardService.diskPointerArray.set([...pointerArray]);
+      console.log('Pointer Array Updated');
+    });
+    this.socket.on('updateGameState', (gameState: any) => {
+      this.boardService.boardArray.set([...gameState.boardArray] as BoardCell[]);
+      this.boardService.diskPointerArray.set([...gameState.diskPointerArray]);
+      this.boardService.redTurn.set(gameState.redTurn);
+      this.boardService.timer.set(gameState.timer);
+      console.log('Game State Updated');
+    });
+    this.socket.on('restartGame', () => {
+      this.boardService.restartGame();
     });
   }
 }

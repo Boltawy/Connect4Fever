@@ -17,13 +17,12 @@ export class Online {
   protected readonly boardService = inject(BoardService);
   protected readonly multiplayerService = inject(MultiplayerService);
 
-  constructor(){
+  constructor() {
     this.multiplayerService.socket.connect();
   }
-  
-  
+
   ngOnDestroy(): void {
-    this.boardService.resetGame();
+    this.boardService.stopGame();
     this.multiplayerService.socket.disconnect();
   }
 }

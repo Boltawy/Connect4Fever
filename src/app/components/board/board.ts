@@ -1,6 +1,6 @@
 import { Component, HostListener, inject, input, signal } from '@angular/core';
 import { BoardHole } from '../board-hole/board-hole';
-import { BoardService } from '../../services/board.service';
+import { BoardCell, BoardService } from '../../services/board.service';
 import { MultiplayerService } from '../../services/multiplayer.service';
 
 @Component({
@@ -12,9 +12,9 @@ import { MultiplayerService } from '../../services/multiplayer.service';
         this.scaling
       }}"
     >
-      @for (hole of boardService.boardArray; track $index) {
+      @for (hole of boardService.boardArray(); track $index) {
       <app-board-hole
-        [state]="boardService.boardArray[$index]"
+        [state]="boardService.boardArray()[$index]"
         (click)="handleHoleClick($index)"
       ></app-board-hole>
       }
@@ -40,7 +40,10 @@ export class Board {
   handleResetKeyPress(event: KeyboardEvent) {
     if (event.key === 'r') {
       this.boardService.resetBoard();
-      this.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
+      if (this.isMultiplayer()) {
+        this.multiplayerService.socket.emit('restartGameRequest');
+      }
+      this.boardService.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
       this.boardService.resetTimer();
     }
   }
@@ -51,6 +54,7 @@ export class Board {
   protected readonly boardArray = this.boardService.boardArray;
   protected readonly columnCount = this.boardService.columnCount;
   protected readonly rowCount = this.boardService.rowCount;
+  protected readonly diskPointerArray = this.boardService.diskPointerArray;
 
   dropSound = new Audio('disc.mp3');
   playDropSound() {
@@ -58,22 +62,25 @@ export class Board {
     this.dropSound.play();
   }
 
-  diskPointerArray = signal<Array<number>>([35, 36, 37, 38, 39, 40, 41]);
   redTurn = this.boardService.redTurn;
 
   handleHoleClick(clickedDiskIndex: number) {
     const clickedHoleColumn = clickedDiskIndex % this.columnCount;
     const clickedHoleRow = Math.floor(clickedDiskIndex / this.columnCount);
-    const placedDiskIndex = this.diskPointerArray()[clickedHoleColumn];
+    const placedDiskIndex = this.boardService.diskPointerArray()[clickedHoleColumn];
     const placedDiskColumn = placedDiskIndex % this.columnCount;
     const placedDiskRow = Math.floor(placedDiskIndex / this.columnCount);
     const playerTurn = this.redTurn() ? 'red' : 'yellow';
 
-    if (this.boardArray[clickedDiskIndex] !== 'empty') {
+    if (this.boardArray()[clickedDiskIndex] !== 'empty') {
       return;
     }
-    this.boardArray[placedDiskIndex] = playerTurn;
-    this.diskPointerArray()[clickedHoleColumn] -= this.columnCount;
+    this.boardArray()[placedDiskIndex] = playerTurn as BoardCell;
+    // this.boardService.diskPointerArray()[clickedHoleColumn] -= this.columnCount;
+    this.diskPointerArray.update((pointerArray) => {
+      pointerArray[clickedHoleColumn] -= this.columnCount;
+      return pointerArray;
+    });
 
     this.boardService.checkForWin(placedDiskIndex, placedDiskColumn, placedDiskRow, playerTurn);
     this.playDropSound();
@@ -82,7 +89,12 @@ export class Board {
     if (this.multiplayerService.socket?.connected) {
       try {
         console.log('Emitting board update:');
-        this.multiplayerService.socket.emit('updateBoardRequest', this.boardArray);
+        this.multiplayerService.socket.emit('updateGameStateRequest', {
+          boardArray: this.boardArray(),
+          diskPointerArray: this.diskPointerArray(),
+          redTurn: this.redTurn(),
+          timer: this.boardService.timer(),
+        });
       } catch (error) {
         console.error('Failed to emit board update:', error);
       }

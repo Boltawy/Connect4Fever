@@ -15,6 +15,6 @@ import { BoardService } from '../services/board.service';
 export class Local implements OnDestroy {
   protected readonly boardService = inject(BoardService);
   ngOnDestroy(): void {
-    this.boardService.resetGame();
+    this.boardService.stopGame();
   }
 }

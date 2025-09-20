@@ -1,17 +1,25 @@
 import { Injectable, signal } from '@angular/core';
 
+export enum BoardCell {
+  EMPTY = 'empty',
+  RED = 'red',
+  YELLOW = 'yellow',
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class BoardService {
-  boardArray = Array(42).fill('empty');
+  boardArray = signal<BoardCell[]>(Array(42).fill(BoardCell.EMPTY));
+  diskPointerArray = signal<Array<number>>([35, 36, 37, 38, 39, 40, 41]);
   redTurn = signal(true);
   rowCount = 6;
   columnCount = 7;
   timerInterval: any;
   resetBoard() {
-    this.boardArray.fill('empty');
+    this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
   }
+
   timerDefaultValue = 20;
   timer = signal<number>(this.timerDefaultValue);
   startTimer() {
@@ -33,11 +41,17 @@ export class BoardService {
     clearInterval(this.timerInterval);
   }
 
-  resetGame() {
+  stopGame() {
     this.resetBoard();
     this.redTurn.set(true);
     this.resetTimer();
     this.stopTimer();
+  }
+
+  restartGame() {
+    this.resetBoard();
+    this.redTurn.set(true);
+    this.resetTimer();
   }
 
   checkForWin(
@@ -59,14 +73,14 @@ export class BoardService {
       i < placedDiskIndex + (this.columnCount - placedDiskColumn);
       i++
     ) {
-      if (this.boardArray[i] === playerTurn) {
+      if (this.boardArray()[i] === playerTurn) {
         horizontalCount++;
       } else {
         break;
       }
     }
     for (let i = placedDiskIndex - 1; i > placedDiskIndex - placedDiskColumn - 1; i--) {
-      if (this.boardArray[i] === playerTurn) {
+      if (this.boardArray()[i] === playerTurn) {
         horizontalCount++;
       } else {
         break;
@@ -85,7 +99,7 @@ export class BoardService {
   ) {
     let verticalCount: number = 0;
     for (let i = 0; i < this.rowCount - placedDiskRow; i++) {
-      if (this.boardArray[placedDiskIndex + i * this.columnCount] === playerTurn) {
+      if (this.boardArray()[placedDiskIndex + i * this.columnCount] === playerTurn) {
         verticalCount++;
       } else {
         break;
@@ -110,7 +124,7 @@ export class BoardService {
       i < this.rowCount - placedDiskRow && i < this.columnCount - placedDiskColumn;
       i++
     ) {
-      if (this.boardArray[placedDiskIndex + i * this.columnCount + i] === playerTurn) {
+      if (this.boardArray()[placedDiskIndex + i * this.columnCount + i] === playerTurn) {
         leftToRightDiagonalCount++;
       } else {
         break;
@@ -118,7 +132,7 @@ export class BoardService {
     }
     //* left & up of placed disk
     for (let i = 1; i < placedDiskRow && i < placedDiskColumn; i++) {
-      if (this.boardArray[placedDiskIndex - i * this.columnCount - i] === playerTurn) {
+      if (this.boardArray()[placedDiskIndex - i * this.columnCount - i] === playerTurn) {
         leftToRightDiagonalCount++;
       } else {
         break;
@@ -132,7 +146,7 @@ export class BoardService {
     let rightToLeftDiagonalCount: number = 0;
     //* left & down of placed disk
     for (let i = 0; i < this.rowCount - placedDiskRow && i < this.columnCount; i++) {
-      if (this.boardArray[placedDiskIndex + i * this.columnCount - i] === playerTurn) {
+      if (this.boardArray()[placedDiskIndex + i * this.columnCount - i] === playerTurn) {
         rightToLeftDiagonalCount++;
       } else {
         break;
@@ -140,7 +154,7 @@ export class BoardService {
     }
     //* right & up of placed disk
     for (let i = 1; i < placedDiskRow && i < this.columnCount - placedDiskColumn; i++) {
-      if (this.boardArray[placedDiskIndex - i * this.columnCount + i] === playerTurn) {
+      if (this.boardArray()[placedDiskIndex - i * this.columnCount + i] === playerTurn) {
         rightToLeftDiagonalCount++;
       } else {
         break;
