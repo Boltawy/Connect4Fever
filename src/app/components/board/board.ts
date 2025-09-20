@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, input, signal } from '@angular/core';
 import { BoardHole } from '../board-hole/board-hole';
 import { BoardService } from '../../services/board.service';
 import { MultiplayerService } from '../../services/multiplayer.service';
@@ -22,12 +22,14 @@ import { MultiplayerService } from '../../services/multiplayer.service';
   `,
 })
 export class Board {
-
   @HostListener('document:keyup', ['$event'])
   handleKeyPress(event: KeyboardEvent) {
     this.handleNumberKeyPress(event);
     this.handleResetKeyPress(event);
   }
+
+  isMultiplayer = input<boolean>(false);
+  protected readonly multiplayerService = inject(MultiplayerService);
 
   handleNumberKeyPress(event: KeyboardEvent) {
     if (Number(event.key) < 8 && Number(event.key) > 0) {
@@ -49,7 +51,6 @@ export class Board {
   protected readonly boardArray = this.boardService.boardArray;
   protected readonly columnCount = this.boardService.columnCount;
   protected readonly rowCount = this.boardService.rowCount;
-
 
   dropSound = new Audio('disc.mp3');
   playDropSound() {
@@ -78,5 +79,15 @@ export class Board {
     this.playDropSound();
     this.redTurn.set(!this.redTurn());
     this.boardService.resetTimer();
+    if (this.multiplayerService.socket?.connected) {
+      try {
+        console.log('Emitting board update:');
+        this.multiplayerService.socket.emit('updateBoardRequest', this.boardArray);
+      } catch (error) {
+        console.error('Failed to emit board update:', error);
+      }
+    } else {
+      console.log('Socket is not connected');
+    }
   }
 }

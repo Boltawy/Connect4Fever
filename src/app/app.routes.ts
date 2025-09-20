@@ -5,6 +5,6 @@ import { Online } from './online/online';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainMenu },
-  { path: 'local', pathMatch: 'full', component: Local },
-  { path: 'online', pathMatch: 'full', component: Online },
+  { path: 'local', component: Local },
+  { path: 'online/:roomId', component: Online },
 ];

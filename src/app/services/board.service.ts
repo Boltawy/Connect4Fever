@@ -59,7 +59,6 @@ export class BoardService {
       i < placedDiskIndex + (this.columnCount - placedDiskColumn);
       i++
     ) {
-      // console.log('checked right');
       if (this.boardArray[i] === playerTurn) {
         horizontalCount++;
       } else {
@@ -67,7 +66,6 @@ export class BoardService {
       }
     }
     for (let i = placedDiskIndex - 1; i > placedDiskIndex - placedDiskColumn - 1; i--) {
-      // console.log('checked left');
       if (this.boardArray[i] === playerTurn) {
         horizontalCount++;
       } else {
@@ -112,22 +110,16 @@ export class BoardService {
       i < this.rowCount - placedDiskRow && i < this.columnCount - placedDiskColumn;
       i++
     ) {
-      // console.log('checked right & down of placed disk');
       if (this.boardArray[placedDiskIndex + i * this.columnCount + i] === playerTurn) {
         leftToRightDiagonalCount++;
-        console.log('leftToRightDiagonalCount', leftToRightDiagonalCount);
       } else {
         break;
       }
     }
     //* left & up of placed disk
     for (let i = 1; i < placedDiskRow && i < placedDiskColumn; i++) {
-      // console.log('column', placedDiskColumn);
-      // console.log('row', placedDiskRow);
-      // console.log('checked left & up of placed disk');
       if (this.boardArray[placedDiskIndex - i * this.columnCount - i] === playerTurn) {
         leftToRightDiagonalCount++;
-        console.log('leftToRightDiagonalCount', leftToRightDiagonalCount);
       } else {
         break;
       }
@@ -139,23 +131,17 @@ export class BoardService {
     //! right to left diagonal
     let rightToLeftDiagonalCount: number = 0;
     //* left & down of placed disk
-    // console.log('Placed Disk Column', placedDiskColumn);
-    // console.log('Placed Disk Row', placedDiskRow);
     for (let i = 0; i < this.rowCount - placedDiskRow && i < this.columnCount; i++) {
-      // console.log('checked left & down of placed disk');
       if (this.boardArray[placedDiskIndex + i * this.columnCount - i] === playerTurn) {
         rightToLeftDiagonalCount++;
-        console.log('rightToLeftDiagonalCount', rightToLeftDiagonalCount);
       } else {
         break;
       }
     }
     //* right & up of placed disk
     for (let i = 1; i < placedDiskRow && i < this.columnCount - placedDiskColumn; i++) {
-      // console.log('checked right & up of placed disk');
       if (this.boardArray[placedDiskIndex - i * this.columnCount + i] === playerTurn) {
         rightToLeftDiagonalCount++;
-        console.log('rightToLeftDiagonalCount', rightToLeftDiagonalCount);
       } else {
         break;
       }

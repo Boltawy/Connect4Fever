@@ -8,14 +8,20 @@ import { BoardService } from '../services/board.service';
   selector: 'app-online',
   imports: [Board, Timer],
   template: `
-    <app-board></app-board>
+    <app-board [isMultiplayer]="true"></app-board>
     <app-timer></app-timer>
   `,
   styles: ``,
 })
 export class Online {
-  protected readonly multiplayerService = inject(MultiplayerService);
   protected readonly boardService = inject(BoardService);
+  protected readonly multiplayerService = inject(MultiplayerService);
+
+  constructor(){
+    this.multiplayerService.socket.connect();
+  }
+  
+  
   ngOnDestroy(): void {
     this.boardService.resetGame();
     this.multiplayerService.socket.disconnect();
