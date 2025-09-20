@@ -14,6 +14,7 @@ export class MultiplayerService {
   constructor() {
     this.socket = io('c4fever.eu-4.evennode.com', {
       transports: ['websocket'],
+      secure: true,
     });
 
     this.socket.off('connect');
