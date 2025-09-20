@@ -12,7 +12,7 @@ export class MultiplayerService {
   socket: Socket;
 
   constructor() {
-    this.socket = io('http://c4fever.eu-4.evennode.com', {
+    this.socket = io('https://c4fever.eu-4.evennode.com', {
       transports: ['websocket'],
       secure: true,
     });
