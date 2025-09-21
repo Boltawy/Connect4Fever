@@ -1,21 +1,37 @@
+import { ApiService } from './api.service';
 import { inject, Injectable, NgZone } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BoardService } from './board.service';
 import { BoardCell } from './board.service';
+import { OnInit } from '@angular/core';
+
+export const API_URLS = {
+  evennode: 'http://c4fever.eu-4.evennode.com',
+  vercel: 'https://connect4fever-api.vercel.app',
+  railway: 'https://connect4fever-api-production.up.railway.app',
+  local: 'http://localhost:3000',
+};
+
+export const BE_URL = API_URLS.evennode;
 
 @Injectable({
   providedIn: 'root',
 })
 export class MultiplayerService {
   protected readonly boardService = inject(BoardService);
-  // protected readonly ngZone = inject(NgZone);
+  protected readonly apiService = inject(ApiService);
+
   socket: Socket;
 
   constructor() {
-    this.socket = io('c4fever.eu-4.evennode.com', {
+    this.socket = io(BE_URL, {
       transports: ['polling', 'websocket'],
       secure: false,
+      upgrade: false,
       rejectUnauthorized: false,
+    });
+    this.apiService.sayHelloWorld().subscribe((res) => {
+      console.log(res, `currently connected to ${BE_URL}`);
     });
 
     this.socket.off('connect');
