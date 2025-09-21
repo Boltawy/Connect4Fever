@@ -6,7 +6,7 @@ import { BoardCell } from './board.service';
 import { OnInit } from '@angular/core';
 
 export const API_URLS = {
-  evennode: 'http://c4fever.eu-4.evennode.com',
+  evennode: 'https://c4fever.eu-4.evennode.com',
   vercel: 'https://connect4fever-api.vercel.app',
   railway: 'https://connect4fever-api-production.up.railway.app',
   local: 'http://localhost:3000',
