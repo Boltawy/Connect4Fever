@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 export const API_URLS = {
   evennode: 'http://c4fever.eu-4.evennode.com',
   vercel: 'https://connect4fever-api.vercel.app',
-  railway: 'https://connect4fever-api-production.up.railway.app',
+  railway: 'https://connect4fever-socket-production.up.railway.app',
   local: 'http://localhost:3000',
 };
 
