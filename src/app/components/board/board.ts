@@ -80,8 +80,22 @@ export class Board {
     if (this.boardArray()[clickedDiskIndex] !== 'empty') {
       return;
     }
+    
+    if (this.isMultiplayer()) {
+      if (
+        (this.multiplayerService.socket.id ===
+          this.multiplayerService.serverGameState().player1Id &&
+          !this.redTurn()) ||
+        (this.multiplayerService.socket.id ===
+          this.multiplayerService.serverGameState().player2Id &&
+          this.redTurn())
+      ) {
+        return;
+      }
+    }
+
     this.boardArray()[placedDiskIndex] = playerTurn as BoardCell;
-    // this.boardService.diskPointerArray()[clickedHoleColumn] -= this.columnCount;
+    
     this.diskPointerArray.update((pointerArray) => {
       pointerArray[clickedHoleColumn] -= this.columnCount;
       return pointerArray;
@@ -107,5 +121,8 @@ export class Board {
     } else {
       console.log('Socket is not connected');
     }
+  }
+  ngOnDestroy(): void {
+    this.boardService.stopGame();
   }
 }

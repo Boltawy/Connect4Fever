@@ -24,6 +24,16 @@ export class MultiplayerService {
   serverGameState = signal<IMultiplayerGameState>({} as IMultiplayerGameState);
   rooms = signal<IMultiplayerGameState[]>([]);
 
+  updateGameState(gameState: IMultiplayerGameState) {
+    this.boardService.boardArray.set(gameState.boardArray);
+    this.boardService.diskPointerArray.set(gameState.diskPointerArray);
+    this.boardService.redTurn.set(gameState.redTurn);
+    this.boardService.timer.set(gameState.timer);
+    if (gameState.player1Id && gameState.player2Id && gameState.roomId) {
+      this.serverGameState.set(gameState);
+    }
+  }
+
   socket!: Socket;
 
   connect() {
@@ -45,7 +55,7 @@ export class MultiplayerService {
     });
 
     this.socket.on(socketEvents.CREATE_ROOM_RESPONSE, (gameState: IMultiplayerGameState) => {
-      this.boardService.updateGameState(gameState);
+      this.updateGameState(gameState);
       console.log('Navigating to /online', gameState.roomId);
       this.router.navigate(['/online', gameState.roomId]);
       this.serverGameState.set(gameState);
@@ -57,14 +67,14 @@ export class MultiplayerService {
     });
 
     this.socket.on(socketEvents.JOIN_ROOM_RESPONSE, (gameState: IMultiplayerGameState) => {
-      this.boardService.updateGameState(gameState);
+      this.updateGameState(gameState);
       console.log('Navigating to /online', gameState.roomId);
       this.router.navigate(['/online', gameState.roomId]);
       this.serverGameState.set(gameState);
     });
 
     this.socket.on(socketEvents.UPDATE_GAME_STATE, (gameState: IMultiplayerGameState) => {
-      this.boardService.updateGameState(gameState);
+      this.updateGameState(gameState);
       this.serverGameState.set(gameState);
     });
     this.socket.on(socketEvents.RESTART_GAME, () => {

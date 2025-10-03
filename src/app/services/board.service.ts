@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { BoardCell } from '../../types';
-import { IMultiplayerGameState } from '../../types';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +15,6 @@ export class BoardService {
     this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
   }
 
-  updateGameState(gameState: IMultiplayerGameState) {
-    this.boardArray.set(gameState.boardArray);
-    this.diskPointerArray.set(gameState.diskPointerArray);
-    this.redTurn.set(gameState.redTurn);
-    this.timer.set(gameState.timer);
-  }
-
   timerDefaultValue = 20;
   timer = signal<number>(this.timerDefaultValue);
   startTimer() {
@@ -35,6 +27,15 @@ export class BoardService {
       }
     }, 1000);
   }
+
+  // pauseTimer() {
+  //   clearInterval(this.timerInterval);
+  // }
+
+  // resumeTimer() {
+  //   this.startTimer();
+  // }
+
   resetTimer() {
     this.timer.set(this.timerDefaultValue);
     clearInterval(this.timerInterval);
