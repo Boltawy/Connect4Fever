@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ShadowArtButton } from '../components/shadow-art-button/shadow-art-button';
-import { MultiplayerService } from '../services/multiplayer.service';
+import { MultiplayerBoardService } from '../services/multiplayer.service';
 import { socketEvents } from '../../types';
 
 @Component({
@@ -26,7 +26,7 @@ import { socketEvents } from '../../types';
   styles: ``,
 })
 export class Rooms {
-  protected readonly multiplayerService = inject(MultiplayerService);
+  protected readonly multiplayerService = inject(MultiplayerBoardService);
   rooms = computed(() => this.multiplayerService.rooms());
 
   constructor() {

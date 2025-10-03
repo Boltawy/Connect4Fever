@@ -1,18 +1,37 @@
 import { Injectable, signal } from '@angular/core';
-import { BoardCell } from '../../types';
+import { BoardCell, GameStatus } from '../../types';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BoardService {
+export class BoardService { //local game state should be (inheretied) or an extension of a  "game state" interface 
   boardArray = signal<BoardCell[]>(Array(42).fill(BoardCell.EMPTY));
   diskPointerArray = signal<Array<number>>([35, 36, 37, 38, 39, 40, 41]);
   redTurn = signal(true);
   rowCount = 6;
   columnCount = 7;
   timerInterval: any;
+  gameStatus = signal<GameStatus>(GameStatus.NOT_STARTED);
+
+  resetGameState() {
+    this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
+    this.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
+    this.redTurn.set(true);
+    this.resetTimer();
+    this.stopTimer();
+    this.gameStatus.set(GameStatus.NOT_STARTED);
+  }
+
+
+  
+  dropSound = new Audio('disc.mp3');
+  playDropSound() {
+    this.dropSound.currentTime = 0;
+    this.dropSound.play();
+  }
   resetBoard() {
     this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
+    this.gameStatus.set(GameStatus.NOT_STARTED);
   }
 
   timerDefaultValue = 20;
@@ -46,16 +65,18 @@ export class BoardService {
   }
 
   stopGame() {
-    this.resetBoard();
-    this.redTurn.set(true);
-    this.resetTimer();
+    this.resetGameState();
     this.stopTimer();
+    this.resetTimer();
   }
 
   restartGame() {
-    this.resetBoard();
-    this.redTurn.set(true);
-    this.resetTimer();
+    this.resetGameState();
+  }
+
+  handleWin(playerTurn: string) {
+    alert(`${playerTurn} wins!`);
+    this.gameStatus.set(playerTurn === 'red' ? GameStatus.RED_WON : GameStatus.YELLOW_WON);
   }
 
   checkForWin(
@@ -91,7 +112,7 @@ export class BoardService {
       }
     }
     if (horizontalCount >= 4) {
-      alert(`${playerTurn} wins!`);
+      this.handleWin(playerTurn)
     }
   }
 
@@ -110,7 +131,7 @@ export class BoardService {
       }
     }
     if (verticalCount >= 4) {
-      alert(`${playerTurn} wins!`);
+      this.handleWin(playerTurn)
     }
   }
 
@@ -143,7 +164,7 @@ export class BoardService {
       }
     }
     if (leftToRightDiagonalCount >= 4) {
-      alert(`${playerTurn} wins!`);
+      this.handleWin(playerTurn);
     }
 
     //! right to left diagonal
@@ -165,7 +186,7 @@ export class BoardService {
       }
     }
     if (rightToLeftDiagonalCount >= 4) {
-      alert(`${playerTurn} wins!`);
+      this.handleWin(playerTurn)
     }
   }
 }

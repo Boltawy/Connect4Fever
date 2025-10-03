@@ -1,35 +1,34 @@
 import { ApiService } from './api.service';
-import { inject, Injectable, NgZone, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BoardService } from './board.service';
-import { BoardCell, IGameState, IMultiplayerGameState, socketEvents } from '../../types';
+import { IMultiplayerGameState, socketEvents } from '../../types';
 import { Router } from '@angular/router';
 
 export const API_URLS = {
   evennode: 'http://c4fever.eu-4.evennode.com',
   vercel: 'https://connect4fever-api.vercel.app',
   railway: 'https://connect4fever-socket-production.up.railway.app',
-  hidenCloud: "nile.hidencloud.com:24593",
-  local: 'http://localhost:3000'
+  hidenCloud: 'nile.hidencloud.com:24593',
+  local: 'http://localhost:3000',
 };
 
-export const BE_URL = API_URLS.railway;
+export const BE_URL = API_URLS.local;
 
 @Injectable({
   providedIn: 'root',
 })
-export class MultiplayerService {
-  protected readonly boardService = inject(BoardService);
+export class MultiplayerBoardService extends BoardService {
   protected readonly apiService = inject(ApiService);
   protected readonly router = inject(Router);
   serverGameState = signal<IMultiplayerGameState>({} as IMultiplayerGameState);
   rooms = signal<IMultiplayerGameState[]>([]);
 
   updateGameState(gameState: IMultiplayerGameState) {
-    this.boardService.boardArray.set(gameState.boardArray);
-    this.boardService.diskPointerArray.set(gameState.diskPointerArray);
-    this.boardService.redTurn.set(gameState.redTurn);
-    this.boardService.timer.set(gameState.timer);
+    this.boardArray.set(gameState.boardArray);
+    this.diskPointerArray.set(gameState.diskPointerArray);
+    this.redTurn.set(gameState.redTurn);
+    this.timer.set(gameState.timer);
     if (gameState.player1Id && gameState.player2Id && gameState.roomId) {
       this.serverGameState.set(gameState);
     }
@@ -79,9 +78,15 @@ export class MultiplayerService {
       this.serverGameState.set(gameState);
     });
     this.socket.on(socketEvents.RESTART_GAME, () => {
-      this.boardService.restartGame();
+      this.restartGame();
+    });
+    this.socket.on(socketEvents.PLAY_DISC_SOUND, () => {
+      this.playDropSound();
     });
   }
+  
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 }

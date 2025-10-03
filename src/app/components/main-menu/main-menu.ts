@@ -1,7 +1,7 @@
 import { ShadowArtButton } from './../shadow-art-button/shadow-art-button';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MultiplayerService } from '../../services/multiplayer.service';
+import { MultiplayerBoardService } from '../../services/multiplayer.service';
 import { Router } from '@angular/router';
 import { socketEvents } from '../../../types';
 
@@ -31,15 +31,15 @@ import { socketEvents } from '../../../types';
   styles: ``,
 })
 export class MainMenu {
-  protected readonly multiplayerService = inject(MultiplayerService);
+  protected readonly multiplayerBoardService = inject(MultiplayerBoardService);
   protected readonly router = inject(Router);
 
   // roomId = Math.floor(Math.random() * 1000000);
 
   async createRoom() {
     try {
-      this.multiplayerService.connect()
-      this.multiplayerService.socket.emit(socketEvents.CREATE_ROOM_REQUEST);
+      this.multiplayerBoardService.connect()
+      this.multiplayerBoardService.socket.emit(socketEvents.CREATE_ROOM_REQUEST);
     } catch (error) {
       console.log(error);
     }
@@ -47,7 +47,7 @@ export class MainMenu {
 
   async joinRoom() {
     try {
-      this.multiplayerService.connect()
+      this.multiplayerBoardService.connect()
       this.router.navigate(['/rooms']);
     } catch (error) {
       console.log(error);
