@@ -9,10 +9,11 @@ export const API_URLS = {
   evennode: 'http://c4fever.eu-4.evennode.com',
   vercel: 'https://connect4fever-api.vercel.app',
   railway: 'https://connect4fever-socket-production.up.railway.app',
-  local: 'http://localhost:3000',
+  hidenCloud: "nile.hidencloud.com:24593",
+  local: 'http://localhost:3000'
 };
 
-export const BE_URL = API_URLS.railway;
+export const BE_URL = API_URLS.hidenCloud;
 
 @Injectable({
   providedIn: 'root',
