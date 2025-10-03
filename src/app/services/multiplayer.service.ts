@@ -1,8 +1,8 @@
 import { ApiService } from './api.service';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BoardService } from './board.service';
-import { IMultiplayerGameState, socketEvents } from '../../types';
+import { GameStatus, IMultiplayerGameState, socketEvents } from '../../types';
 import { Router } from '@angular/router';
 
 export const API_URLS = {
@@ -32,6 +32,17 @@ export class MultiplayerBoardService extends BoardService {
     if (gameState.player1Id && gameState.player2Id && gameState.roomId) {
       this.serverGameState.set(gameState);
     }
+  }
+  constructor() {
+    super();
+    // effect(() => {
+    //   console.log('computed value changed ', this.gameStatus());
+    //   if (this.gameStatus() === GameStatus.RED_WON) {
+    //     this.socket.emit(socketEvents.RED_WINS, this.serverGameState().roomId);
+    //   } else if (this.gameStatus() === GameStatus.YELLOW_WON) {
+    //     this.socket.emit(socketEvents.YELLOW_WINS, this.serverGameState().roomId);
+    //   }
+    // });
   }
 
   socket!: Socket;
@@ -83,10 +94,11 @@ export class MultiplayerBoardService extends BoardService {
     this.socket.on(socketEvents.PLAY_DISC_SOUND, () => {
       this.playDropSound();
     });
-  }
-  
-
-  constructor() {
-    super();
+    this.socket.on(socketEvents.RED_WINS, () => {
+      alert('RED WINS');
+    });
+    this.socket.on(socketEvents.YELLOW_WINS, () => {
+      alert('YELLOW WINS');
+    });
   }
 }

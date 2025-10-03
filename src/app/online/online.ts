@@ -37,7 +37,6 @@ export class Online {
   });
 
   ngOnDestroy(): void {
-    this.multiplayerService.stopGame();
-    this.multiplayerService.socket.disconnect();
+    // this.multiplayerService.resetGameState();
   }
 }

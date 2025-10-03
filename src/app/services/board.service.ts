@@ -17,7 +17,7 @@ export class BoardService { //local game state should be (inheretied) or an exte
     this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
     this.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
     this.redTurn.set(true);
-    this.resetTimer();
+    // this.resetTimer();
     this.stopTimer();
     this.gameStatus.set(GameStatus.NOT_STARTED);
   }

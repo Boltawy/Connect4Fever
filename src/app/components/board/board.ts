@@ -37,7 +37,7 @@ export class Board implements OnInit {
 
   ngOnInit() {
     this.boardService = this.isMultiplayer() ? this.multiPlayerInjection : this.boardInjection;
-    this.boardService.startTimer();
+    // this.boardService.startTimer();
   }
 
 
@@ -137,5 +137,8 @@ export class Board implements OnInit {
   }
   ngOnDestroy(): void {
     this.boardService.resetGameState();
+    if (this.boardService instanceof MultiplayerBoardService) {
+      this.boardService.socket.disconnect();
+    }
   }
 }

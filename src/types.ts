@@ -39,5 +39,6 @@ export enum socketEvents { // should define both name & payload, Probably a "wra
   UPDATE_GAME_STATE = 'updateGameState',
   RESTART_GAME = 'restartGame',
   PLAY_DISC_SOUND = 'playDiscSound',
-  WIN = 'win',
+  RED_WINS = 'redWins',
+  YELLOW_WINS = 'yellowWins'
 }
