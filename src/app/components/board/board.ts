@@ -1,7 +1,8 @@
-import { Component, HostListener, inject, input, signal } from '@angular/core';
+import { Component, HostListener, inject, input } from '@angular/core';
 import { BoardHole } from '../board-hole/board-hole';
-import { BoardCell, BoardService } from '../../services/board.service';
+import { BoardService } from '../../services/board.service';
 import { MultiplayerService } from '../../services/multiplayer.service';
+import { BoardCell, IMultiplayerGameState, socketEvents } from '../../../types';
 
 @Component({
   selector: 'app-board',
@@ -41,7 +42,11 @@ export class Board {
     if (event.key === 'r') {
       this.boardService.resetBoard();
       if (this.isMultiplayer()) {
-        this.multiplayerService.socket.emit('restartGameRequest');
+        this.multiplayerService.socket.emit(
+          socketEvents.RESTART_GAME,
+          this.multiplayerService.serverGameState().roomId
+        );
+        console.log(this.multiplayerService.serverGameState());
       }
       this.boardService.diskPointerArray.set([35, 36, 37, 38, 39, 40, 41]);
       this.boardService.resetTimer();
@@ -86,14 +91,15 @@ export class Board {
     this.playDropSound();
     this.redTurn.set(!this.redTurn());
     this.boardService.resetTimer();
-    if (this.multiplayerService.socket?.connected) {
+    if (this.multiplayerService.socket?.connected && this.isMultiplayer()) {
       try {
         console.log('Emitting board update:');
-        this.multiplayerService.socket.emit('updateGameStateRequest', {
+        this.multiplayerService.socket.emit(socketEvents.UPDATE_GAME_STATE, {
           boardArray: this.boardArray(),
           diskPointerArray: this.diskPointerArray(),
           redTurn: this.redTurn(),
           timer: this.boardService.timer(),
+          roomId: this.multiplayerService.serverGameState().roomId,
         });
       } catch (error) {
         console.error('Failed to emit board update:', error);

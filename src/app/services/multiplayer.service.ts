@@ -1,18 +1,18 @@
 import { ApiService } from './api.service';
-import { inject, Injectable, NgZone } from '@angular/core';
+import { inject, Injectable, NgZone, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BoardService } from './board.service';
-import { BoardCell } from './board.service';
-import { OnInit } from '@angular/core';
+import { BoardCell, IGameState, IMultiplayerGameState, socketEvents } from '../../types';
+import { Router } from '@angular/router';
 
 export const API_URLS = {
-  evennode: 'https://c4fever.eu-4.evennode.com',
+  evennode: 'http://c4fever.eu-4.evennode.com',
   vercel: 'https://connect4fever-api.vercel.app',
   railway: 'https://connect4fever-api-production.up.railway.app',
   local: 'http://localhost:3000',
 };
 
-export const BE_URL = API_URLS.evennode;
+export const BE_URL = API_URLS.local;
 
 @Injectable({
   providedIn: 'root',
@@ -20,46 +20,57 @@ export const BE_URL = API_URLS.evennode;
 export class MultiplayerService {
   protected readonly boardService = inject(BoardService);
   protected readonly apiService = inject(ApiService);
+  protected readonly router = inject(Router);
+  serverGameState = signal<IMultiplayerGameState>({} as IMultiplayerGameState);
+  rooms = signal<IMultiplayerGameState[]>([]);
 
-  socket: Socket;
+  socket!: Socket;
 
-  constructor() {
+  connect() {
     this.socket = io(BE_URL, {
-      transports: ['polling', 'websocket'],
-      secure: false,
-      upgrade: false,
-      rejectUnauthorized: false,
+      transports: ['websocket'],
     });
     this.apiService.sayHelloWorld().subscribe((res) => {
       console.log(res, `currently connected to ${BE_URL}`);
     });
 
-    this.socket.off('connect');
-    this.socket.off('disconnect');
+    this.socket.off(socketEvents.CONNECT);
+    this.socket.off(socketEvents.DISCONNECT);
 
-    this.socket.on('connect', () => {
+    this.socket.on(socketEvents.CONNECT, () => {
       console.log('Connected to server', this.socket.id);
     });
-    this.socket.on('disconnect', () => {
+    this.socket.on(socketEvents.DISCONNECT, () => {
       console.log('Disconnected from server');
     });
-    this.socket.on('updateBoard', (boardArray: string[]) => {
-      this.boardService.boardArray.set([...boardArray] as BoardCell[]);
-      console.log('Board Updated');
+
+    this.socket.on(socketEvents.CREATE_ROOM_RESPONSE, (gameState: IMultiplayerGameState) => {
+      this.boardService.updateGameState(gameState);
+      console.log('Navigating to /online', gameState.roomId);
+      this.router.navigate(['/online', gameState.roomId]);
+      this.serverGameState.set(gameState);
     });
-    this.socket.on('updatePointerArray', (pointerArray: number[]) => {
-      this.boardService.diskPointerArray.set([...pointerArray]);
-      console.log('Pointer Array Updated');
+
+    this.socket.on(socketEvents.GET_ROOMS_RESPONSE, (rooms: IMultiplayerGameState[]) => {
+      this.rooms.set(rooms);
+      console.log(this.rooms());
     });
-    this.socket.on('updateGameState', (gameState: any) => {
-      this.boardService.boardArray.set([...gameState.boardArray] as BoardCell[]);
-      this.boardService.diskPointerArray.set([...gameState.diskPointerArray]);
-      this.boardService.redTurn.set(gameState.redTurn);
-      this.boardService.timer.set(gameState.timer);
-      console.log('Game State Updated');
+
+    this.socket.on(socketEvents.JOIN_ROOM_RESPONSE, (gameState: IMultiplayerGameState) => {
+      this.boardService.updateGameState(gameState);
+      console.log('Navigating to /online', gameState.roomId);
+      this.router.navigate(['/online', gameState.roomId]);
+      this.serverGameState.set(gameState);
     });
-    this.socket.on('restartGame', () => {
+
+    this.socket.on(socketEvents.UPDATE_GAME_STATE, (gameState: IMultiplayerGameState) => {
+      this.boardService.updateGameState(gameState);
+      this.serverGameState.set(gameState);
+    });
+    this.socket.on(socketEvents.RESTART_GAME, () => {
       this.boardService.restartGame();
     });
   }
+
+  constructor() {}
 }

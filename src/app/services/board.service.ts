@@ -1,10 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-
-export enum BoardCell {
-  EMPTY = 'empty',
-  RED = 'red',
-  YELLOW = 'yellow',
-}
+import { BoardCell } from '../../types';
+import { IMultiplayerGameState } from '../../types';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +14,13 @@ export class BoardService {
   timerInterval: any;
   resetBoard() {
     this.boardArray.set(Array(42).fill(BoardCell.EMPTY));
+  }
+
+  updateGameState(gameState: IMultiplayerGameState) {
+    this.boardArray.set(gameState.boardArray);
+    this.diskPointerArray.set(gameState.diskPointerArray);
+    this.redTurn.set(gameState.redTurn);
+    this.timer.set(gameState.timer);
   }
 
   timerDefaultValue = 20;

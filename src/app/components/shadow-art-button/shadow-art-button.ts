@@ -9,13 +9,14 @@ import { Component, computed, input } from '@angular/core';
       class="hover:-translate-y-0.5 transition-all active:translate-y-0.5"
     >
       <span class="">{{ textContent() }}</span>
-      <span>ICON</span>
+      <span>{{ rightContent() || 'ICON' }}</span>
     </button>
   `,
   styles: ``,
 })
 export class ShadowArtButton {
   textContent = input<string>();
+  rightContent = input<string>();
   extraClasses = input<string>();
   color = input<string>('bg-white');
   classes = computed(() => {

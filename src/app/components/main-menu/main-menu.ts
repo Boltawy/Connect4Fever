@@ -2,6 +2,8 @@ import { ShadowArtButton } from './../shadow-art-button/shadow-art-button';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MultiplayerService } from '../../services/multiplayer.service';
+import { Router } from '@angular/router';
+import { socketEvents } from '../../../types';
 
 @Component({
   selector: 'app-main-menu',
@@ -17,13 +19,11 @@ import { MultiplayerService } from '../../services/multiplayer.service';
       <app-shadow-art-button
         textContent="CREATE A ROOM"
         color="bg-blue-200"
-        routerLink="/online/1"
         (click)="createRoom()"
       ></app-shadow-art-button>
       <app-shadow-art-button
         textContent="JOIN A ROOM"
         color="bg-blue-200"
-        routerLink="/online/1"
         (click)="joinRoom()"
       ></app-shadow-art-button>
     </div>
@@ -32,16 +32,25 @@ import { MultiplayerService } from '../../services/multiplayer.service';
 })
 export class MainMenu {
   protected readonly multiplayerService = inject(MultiplayerService);
+  protected readonly router = inject(Router);
+
   // roomId = Math.floor(Math.random() * 1000000);
 
-  createRoom() {
-    this.multiplayerService.socket.connect();
-    this.multiplayerService.socket.emit('createRoom', '1');
+  async createRoom() {
+    try {
+      this.multiplayerService.connect()
+      this.multiplayerService.socket.emit(socketEvents.CREATE_ROOM_REQUEST);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  joinRoom() {
-    this.multiplayerService.socket.connect();
-    this.multiplayerService.socket.emit('joinRoom', '1');
-    console.log(1);
+  async joinRoom() {
+    try {
+      this.multiplayerService.connect()
+      this.router.navigate(['/rooms']);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
