@@ -8,19 +8,21 @@ import { BoardService } from '../services/board.service';
   selector: 'app-online',
   imports: [Board, Timer],
   template: `
-    <h1
-      class=" absolute top-1/10 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-white font-bold tracking-wider"
-    >
-      You Are <span class="{{ playerColorClass() }}">{{ playerColor() }}</span>
-    </h1>
+    <div class="absolute top-1/10 min-w-content left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white shadow-art rounded-lg px-4 p-2 scale-[0.8] sm:scale-[0.9] md:scale-[1]">
+      <h1
+        class="text-3xl text-black font-bold tracking-wider"
+      >
+        You Are <span class="{{ playerColorClass() }}">{{ playerColor() }}</span>
+      </h1>
+    </div>
     <app-board [isMultiplayer]="true"></app-board>
     <app-timer></app-timer>
   `,
-  styles: `h1 {
-  -webkit-text-stroke-width: 3px;
-  paint-order: stroke fill;
-  -webkit-text-stroke-color: black;
-  }`,
+  styles: `
+    .min-w-content {
+      min-width: max-content;
+    }
+  `,
 })
 export class Online {
   protected readonly boardService = inject(BoardService);
@@ -32,7 +34,7 @@ export class Online {
       : 'YELLOW';
   });
   playerColorClass = computed(() => {
-    return this.playerColor() === 'RED' ? 'text-red-400' : 'text-yellow-300';
+    return this.playerColor() === 'RED' ? 'text-red-500' : 'text-yellow-400';
   });
 
   constructor() {
