@@ -12,7 +12,7 @@ export const API_URLS = {
   local: 'http://localhost:3000',
 };
 
-export const BE_URL = API_URLS.local;
+export const BE_URL = API_URLS.railway;
 
 @Injectable({
   providedIn: 'root',
